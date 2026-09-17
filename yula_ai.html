@@ -1,0 +1,2464 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YULA-AI | Akıl ve Zeka Oyunları Eğitim Koçu</title>
+    <style>
+        :root {
+            --turquoise: #14b8c4;
+            --turquoise-dark: #087985;
+            --gold: #d6aa46;
+            --gold-soft: #fff2c7;
+            --ink: #173044;
+            --muted: #667789;
+            --cream: #fff9ea;
+            --paper: #fffef8;
+            --panel: rgba(255, 254, 248, .92);
+            --line: rgba(123, 90, 33, .22);
+            --red: #dc3e3e;
+            --green: #28a86b;
+            --blue: #2ca7f0;
+            --pink: #f36aa6;
+            --shadow: 0 18px 42px rgba(36, 45, 52, .16);
+        }
+        body.dark {
+            --ink: #ecf8fb;
+            --muted: #b7c8d3;
+            --cream: #121a22;
+            --paper: #172330;
+            --panel: rgba(23, 35, 48, .94);
+            --line: rgba(214, 170, 70, .22);
+            --shadow: 0 18px 42px rgba(0, 0, 0, .35);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--ink);
+            background-color: var(--cream);
+            background-image:
+                radial-gradient(circle at 12% 12%, rgba(20, 184, 196, .22), transparent 26rem),
+                radial-gradient(circle at 88% 16%, rgba(214, 170, 70, .28), transparent 28rem),
+                linear-gradient(45deg, rgba(20, 184, 196, .05) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(214, 170, 70, .06) 25%, transparent 25%),
+                url("data:image/svg+xml,%3Csvg width='96' height='96' viewBox='0 0 96 96' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23b48b36' stroke-opacity='.18' stroke-width='2'%3E%3Cpath d='M48 6 68 26 48 46 28 26zM48 50 68 70 48 90 28 70z'/%3E%3Cpath d='M6 48 26 28 46 48 26 68zM50 48 70 28 90 48 70 68z'/%3E%3Ccircle cx='48' cy='48' r='7'/%3E%3C/g%3E%3C/svg%3E");
+            background-size: auto, auto, 44px 44px, 44px 44px, 96px 96px;
+        }
+        button, input { font: inherit; }
+        button {
+            border: 0;
+            cursor: pointer;
+        }
+        .hidden { display: none !important; }
+        .app {
+            width: min(1200px, calc(100% - 30px));
+            margin: 0 auto;
+            padding: 18px 0 130px;
+        }
+        .topbar {
+            position: sticky;
+            top: 12px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 12px 14px;
+            border: 2px solid var(--line);
+            border-bottom: 6px solid var(--gold);
+            border-radius: 24px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 270px;
+        }
+        .logo {
+            width: 62px;
+            height: 62px;
+            flex: 0 0 auto;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--gold);
+            box-shadow: 0 8px 18px rgba(8, 121, 133, .22);
+            background: var(--gold-soft);
+        }
+        .brand-title {
+            display: grid;
+            line-height: 1.08;
+        }
+        .brand-title strong {
+            font-size: 1.7rem;
+            color: var(--turquoise-dark);
+            letter-spacing: .02em;
+        }
+        body.dark .brand-title strong { color: #62e5ed; }
+        .brand-title span {
+            font-size: .78rem;
+            color: var(--muted);
+            font-weight: 850;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .nav button,
+        .small-btn,
+        .action-row button {
+            min-height: 42px;
+            padding: 0 15px;
+            border-radius: 14px;
+            color: var(--ink);
+            background: linear-gradient(180deg, #fffef8, #f2ead4);
+            border: 1px solid var(--line);
+            box-shadow: 0 6px 0 rgba(123, 90, 33, .18), 0 12px 18px rgba(20, 49, 68, .08);
+            font-weight: 950;
+            transition: transform .16s ease, box-shadow .16s ease, background .16s ease, color .16s ease;
+        }
+        body.dark .nav button,
+        body.dark .small-btn,
+        body.dark .action-row button {
+            background: linear-gradient(180deg, #223242, #172330);
+        }
+        .nav button:hover,
+        .small-btn:hover,
+        .action-row button:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(180deg, #e6fbff, #afeef5);
+            color: #064a54;
+            box-shadow: 0 9px 0 rgba(8, 121, 133, .22), 0 18px 26px rgba(20, 49, 68, .13);
+        }
+        .nav button:active,
+        .small-btn:active,
+        .action-row button:active,
+        .login-panel:active,
+        .category-card:active,
+        .game-card:active {
+            transform: translateY(3px) scale(.99);
+            box-shadow: 0 2px 0 rgba(123, 90, 33, .20), 0 5px 12px rgba(20, 49, 68, .12);
+        }
+        .nav button.active {
+            color: #073d46;
+            background: linear-gradient(180deg, #ffe9a4, var(--gold));
+        }
+        .nav button.danger:hover {
+            color: #fff;
+            background: linear-gradient(180deg, #ff7474, var(--red));
+            box-shadow: 0 9px 0 rgba(126, 20, 20, .28), 0 18px 26px rgba(126, 20, 20, .18);
+        }
+        h1, h2, h3, p { margin-top: 0; }
+        .lead {
+            color: var(--muted);
+            line-height: 1.55;
+            font-weight: 700;
+        }
+        .login {
+            min-height: calc(100vh - 50px);
+            display: grid;
+            place-items: center;
+        }
+        .login-shell {
+            width: min(960px, 100%);
+        }
+        .login-hero {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 18px;
+            align-items: center;
+            margin-bottom: 18px;
+            padding: 18px;
+            border-radius: 28px;
+            background: var(--panel);
+            border: 2px solid var(--line);
+            box-shadow: var(--shadow);
+        }
+        .login-hero h1 {
+            margin: 0 0 6px;
+            font-size: clamp(2.1rem, 6vw, 4rem);
+            color: var(--turquoise-dark);
+            letter-spacing: .02em;
+        }
+        body.dark .login-hero h1 { color: #62e5ed; }
+        .login-hero img {
+            width: 118px;
+            height: 118px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--gold);
+            box-shadow: 0 14px 28px rgba(8, 121, 133, .22);
+        }
+        .login-grid {
+            display: grid;
+            grid-template-columns: 1.35fr .9fr;
+            gap: 16px;
+            align-items: stretch;
+        }
+        .side-login {
+            display: grid;
+            gap: 16px;
+        }
+        .login-panel {
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+            border-radius: 28px;            padding: 24px;
+            background: var(--panel);
+            border: 2px solid var(--line);
+            box-shadow: 0 11px 0 rgba(214, 170, 70, .22), var(--shadow);
+            transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+        }
+        .login-panel:hover {
+            transform: translateY(-5px);
+            border-color: rgba(20, 184, 196, .55);
+            box-shadow: 0 15px 0 rgba(20, 184, 196, .18), 0 26px 42px rgba(20, 49, 68, .15);
+        }
+        .login-panel.student {
+            min-height: 410px;
+            background:
+                linear-gradient(135deg, rgba(20, 184, 196, .16), rgba(214, 170, 70, .18)),
+                var(--panel);
+        }
+        .login-panel .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 34px;
+            padding: 0 12px;
+            border-radius: 999px;
+            color: #704d05;
+            background: var(--gold-soft);
+            font-weight: 950;
+            font-size: .82rem;
+        }
+        .login-panel h2 {
+            margin: 16px 0 8px;
+            font-size: clamp(1.55rem, 4vw, 2.35rem);
+        }
+        .login-panel .icon {
+            width: 68px;
+            height: 68px;
+            display: grid;
+            place-items: center;
+            border-radius: 22px;
+            background: linear-gradient(135deg, var(--turquoise), var(--gold));
+            color: #fff;
+            font-size: 2.2rem;
+            box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .15);
+        }
+        .field {
+            width: 100%;
+            min-height: 58px;
+            padding: 0 18px;
+            margin: 16px 0 12px;
+            border-radius: 18px;
+            border: 2px solid var(--line);
+            background: rgba(255, 255, 255, .72);
+            color: var(--ink);
+            outline: none;
+            font-weight: 900;
+        }
+        body.dark .field { background: rgba(16, 26, 38, .74); }
+        .field:focus {
+            border-color: var(--turquoise);
+            box-shadow: 0 0 0 5px rgba(20, 184, 196, .16);
+        }
+        .primary {
+            width: 100%;
+            min-height: 58px;
+            border-radius: 18px;
+            color: #073d46;
+            background: linear-gradient(180deg, #ffe9a4, var(--gold));
+            font-weight: 1000;
+            box-shadow: 0 8px 0 rgba(123, 90, 33, .25), 0 18px 24px rgba(20, 49, 68, .10);
+            transition: transform .16s ease, box-shadow .16s ease;
+        }
+        .primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 11px 0 rgba(8, 121, 133, .20), 0 24px 28px rgba(20, 49, 68, .13);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin: 24px 0;
+        }
+        .stat,
+        .section-panel {
+            background: var(--panel);
+            border: 2px solid var(--line);
+            box-shadow: var(--shadow);
+        }
+        .stat {
+            min-height: 116px;
+            padding: 17px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            border-radius: 24px;
+        }
+        .stat-icon {
+            width: 54px;
+            height: 54px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px;
+            color: #073d46;
+            background: linear-gradient(135deg, #e5fbff, #ffe4a3);
+            font-size: 1.7rem;
+        }
+        .stat label {
+            display: block;
+            color: var(--muted);
+            font-size: .76rem;
+            font-weight: 950;
+            text-transform: uppercase;
+        }
+        .stat strong {
+            display: block;
+            margin-top: 4px;
+            font-size: 1.3rem;
+            line-height: 1.1;
+        }
+        .section-panel {
+            border-radius: 28px;
+            padding: 22px;
+        }
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 2px dashed var(--line);
+        }
+        .section-head h2 { margin: 0; }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .category-card {
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-align: left;
+            padding: 26px;
+            border-radius: 28px;
+            color: #123244;
+            border: 3px solid rgba(255, 255, 255, .55);
+            box-shadow: inset 0 -9px 0 rgba(0, 0, 0, .08), 0 16px 30px rgba(20, 49, 68, .12);
+            transition: transform .16s ease, box-shadow .16s ease;
+        }
+        .category-card:hover,
+        .game-card:hover,
+        .level-btn:hover,
+        .avatar-btn:hover {
+            transform: translateY(-4px);
+        }
+        .category-card.board {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, .40), transparent),
+                linear-gradient(135deg, #ffeab0, #d6aa46);
+        }
+        .category-card.paper {
+            background:
+                linear-gradient(135deg, rgba(255, 255, 255, .45), transparent),
+                linear-gradient(135deg, #c9f7fb, #14b8c4);
+        }
+        .big-icon {
+            width: 74px;
+            height: 74px;
+            display: grid;
+            place-items: center;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, .55);
+            font-size: 2.2rem;
+        }
+        .category-card h3 {
+            margin: 14px 0 8px;
+            font-size: clamp(1.55rem, 4vw, 2.25rem);
+        }
+        .category-card p {
+            color: rgba(18, 50, 68, .78);
+            line-height: 1.45;
+            font-weight: 800;
+        }
+        .pill {
+            display: inline-flex;
+            min-height: 34px;
+            align-items: center;
+            padding: 0 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, .65);
+            font-weight: 950;
+            font-size: .83rem;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 12px;
+        }
+        .game-card,
+        .level-btn,
+        .avatar-btn {
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .68);
+            border: 2px solid var(--line);
+            color: var(--ink);
+            box-shadow: 0 7px 0 rgba(123, 90, 33, .12), 0 12px 20px rgba(20, 49, 68, .08);
+            transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+        }
+        body.dark .game-card,
+        body.dark .level-btn,
+        body.dark .avatar-btn {
+            background: rgba(20, 31, 44, .86);
+        }
+        .game-card {
+            min-height: 122px;
+            padding: 14px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .game-card.playable {
+            border-color: rgba(20, 184, 196, .65);
+            background: linear-gradient(180deg, rgba(20, 184, 196, .14), rgba(255, 255, 255, .70));
+        }
+        body.dark .game-card.playable {
+            background: linear-gradient(180deg, rgba(20, 184, 196, .18), rgba(20, 31, 44, .86));
+        }
+        .game-card.disabled { opacity: .72; }
+        .game-card strong { font-size: .98rem; }
+        .game-card span { color: var(--muted); font-size: .78rem; font-weight: 850; }
+        .game-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 18px;
+        }
+        .rules {
+            max-height: 640px;
+            overflow: auto;
+            padding-right: 8px;
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: .94rem;
+        }
+        .rules strong { color: var(--ink); }
+        .rules li { margin: 8px 0; }
+        .game-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 14px;
+            margin-bottom: 18px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .55);
+            border: 2px solid var(--line);
+            font-weight: 900;
+        }
+        body.dark .game-status { background: rgba(20, 31, 44, .78); }
+        .mangala-board {
+            width: min(720px, 100%);
+            margin: 0 auto 18px;
+            padding: 18px;
+            display: grid;
+            grid-template-columns: 78px 1fr 78px;
+            gap: 16px;
+            align-items: center;
+            border-radius: 34px;
+            background:
+                linear-gradient(135deg, rgba(214, 170, 70, .30), transparent),
+                linear-gradient(135deg, #a76330, #6d3519);
+            border: 7px solid #523017;
+            box-shadow: inset 0 0 26px rgba(0, 0, 0, .28);
+            color: #fff;
+        }
+        .pit-grid { display: grid; grid-template-rows: repeat(2, 78px); gap: 16px; }
+        .pit-row { display: grid; grid-template-columns: repeat(6, minmax(44px, 1fr)); gap: 10px; }
+        .pit, .store {
+            display: grid;
+            place-items: center;
+            border-radius: 999px;
+            background: radial-gradient(circle at 35% 30%, #ffe0a1, #8e4b23);
+            color: #fff;
+            border: 3px solid rgba(68, 32, 13, .70);
+            font-size: 1.35rem;
+            font-weight: 1000;
+            box-shadow: inset 0 6px 14px rgba(0, 0, 0, .25), inset 0 -5px 10px rgba(255, 255, 255, .12);
+        }
+        .pit.player {
+            cursor: pointer;
+            outline: 3px solid rgba(214, 170, 70, .40);
+            transition: transform .14s ease, outline-color .14s ease;
+        }
+        .pit.player:hover {
+            outline-color: #ffe083;
+            transform: scale(1.05);
+        }
+        .store {
+            min-height: 180px;
+            border-radius: 38px;
+            font-size: 1.7rem;
+        }
+        .log {
+            height: 142px;
+            overflow: auto;
+            padding: 12px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .52);
+            border: 2px solid var(--line);
+            color: var(--muted);
+            font-size: .9rem;
+            line-height: 1.45;
+        }
+        body.dark .log { background: rgba(20, 31, 44, .78); }
+        .level-strip {
+            display: grid;
+            grid-template-columns: repeat(10, minmax(42px, 1fr));
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .level-btn {
+            min-height: 42px;
+            font-weight: 950;
+        }
+        .level-btn.open {
+            border-color: rgba(20, 184, 196, .65);
+            background: linear-gradient(180deg, #e4fbff, #c6f2f5);
+        }
+        .level-btn.active {
+            border-color: var(--gold);
+            background: linear-gradient(180deg, #ffe9a4, var(--gold));
+        }
+        .level-btn.locked {
+            opacity: .45;
+            cursor: default;
+        }
+        .apt-wrap {
+            display: grid;
+            place-items: center;
+            overflow-x: auto;
+            padding: 6px 0 18px;
+        }
+        .apt-grid {
+            display: grid;
+            grid-template-columns: 42px repeat(4, 62px) 42px;
+            grid-template-rows: 42px repeat(4, 62px) 42px;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+        .clue {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: var(--gold-soft);
+            color: #77520d;
+            border: 2px solid rgba(214, 170, 70, .55);
+            font-weight: 1000;
+        }
+        .apt-grid input {
+            width: 62px;
+            height: 62px;
+            text-align: center;
+            border-radius: 18px;
+            border: 2px solid var(--line);
+            background: rgba(255, 255, 255, .72);
+            color: var(--ink);
+            font-weight: 1000;
+            font-size: 1.45rem;
+            outline: none;
+        }
+        body.dark .apt-grid input { background: rgba(20, 31, 44, .78); }
+        .apt-grid input:focus {
+            border-color: var(--turquoise);
+            box-shadow: 0 0 0 5px rgba(20, 184, 196, .15);
+        }
+        .apt-grid input.ok { border-color: var(--green); background: rgba(40, 168, 107, .16); }
+        .apt-grid input.bad { border-color: var(--red); background: rgba(220, 62, 62, .14); }
+        .action-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+        .action-row button.primary-action {
+            color: #073d46;
+            background: linear-gradient(180deg, #ffe9a4, var(--gold));
+        }
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 18px;
+        }
+        .avatar-main {
+            width: 128px;
+            height: 128px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 12px;
+            border-radius: 36px;
+            background: linear-gradient(135deg, #e5fbff, #fff1bf);
+            font-size: 4.1rem;
+            border: 6px solid var(--blue);
+            box-shadow: 0 12px 30px rgba(44, 167, 240, .22);
+            transition: border-color .2s ease, box-shadow .2s ease;
+        }
+        .avatar-main.girl {
+            border-color: var(--pink);
+            box-shadow: 0 12px 30px rgba(243, 106, 166, .24);
+        }
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .avatar-btn {
+            min-height: 66px;
+            font-size: 1.85rem;
+        }
+        .avatar-btn.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 5px rgba(214, 170, 70, .18);
+        }
+        .progress-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+        .progress-table th {
+            text-align: left;
+            color: var(--muted);
+            font-size: .78rem;
+            text-transform: uppercase;
+            padding: 0 12px;
+        }
+        .progress-table td {
+            background: rgba(255, 255, 255, .54);
+            padding: 14px 12px;
+            font-weight: 850;
+        }
+        body.dark .progress-table td { background: rgba(20, 31, 44, .78); }
+        .progress-table td:first-child { border-radius: 16px 0 0 16px; }
+        .progress-table td:last-child { border-radius: 0 16px 16px 0; }
+        .bar {
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(100, 116, 139, .18);
+            overflow: hidden;
+        }
+        .bar span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--turquoise), var(--gold));
+        }
+        .robot {
+            position: fixed;
+            right: 18px;
+            bottom: 18px;
+            z-index: 40;
+            width: 270px;
+            user-select: none;
+            touch-action: none;
+        }
+        .speech {
+            min-height: 72px;
+            max-height: 156px;
+            overflow: auto;
+            padding: 13px 14px;
+            margin-bottom: 12px;
+            border-radius: 20px;
+            background: var(--panel);
+            border: 3px solid var(--gold);
+            box-shadow: var(--shadow);
+            color: var(--ink);
+            font-size: .88rem;
+            line-height: 1.45;
+            font-weight: 800;
+        }
+        .robot-body {
+            width: 138px;
+            margin-left: auto;
+            display: grid;
+            justify-items: center;
+            cursor: grab;
+            filter: drop-shadow(0 14px 18px rgba(0, 0, 0, .18));
+        }
+        .robot-body:active { cursor: grabbing; }
+        .bork {
+            width: 86px;
+            height: 42px;
+            border-radius: 42px 42px 10px 10px;
+            background: linear-gradient(135deg, #8b5724, #553012);
+            border: 4px solid var(--gold);
+            position: relative;
+            margin-bottom: -7px;
+        }
+        .bork::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: -22px;
+            width: 14px;
+            height: 34px;
+            border-radius: 80% 20% 80% 20%;
+            background: linear-gradient(135deg, #f3d88e, #6f4a18);
+            transform: translateX(-50%) rotate(20deg);
+            border: 2px solid #6f4a18;
+        }
+        .robot-head {
+            width: 94px;
+            height: 78px;
+            border-radius: 28px;
+            background: linear-gradient(180deg, #f8fbff, #cbd7df);
+            border: 4px solid #7a8b9b;
+            display: grid;
+            justify-items: center;
+            align-content: center;            gap: 9px;
+        }
+        body.dark .robot-head { background: linear-gradient(180deg, #667789, #303b49); }
+        .robot-eyes {
+            display: flex;
+            gap: 18px;
+        }
+        .robot-eye {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--turquoise);
+            box-shadow: 0 0 12px var(--turquoise);
+            position: relative;
+        }
+        .robot-eye::after {
+            content: "";
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            top: 3px;
+            left: 4px;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .robot-smile {
+            width: 34px;
+            height: 16px;
+            border-bottom: 5px solid #542018;
+            border-radius: 0 0 999px 999px;
+        }
+        .robot-smile.talking {
+            animation: talk .16s infinite alternate ease-in-out;
+            border: 0;
+            background: #b62020;
+        }
+        @keyframes talk {
+            from { width: 31px; height: 8px; border-radius: 999px; }
+            to { width: 24px; height: 19px; border-radius: 50%; }
+        }
+        .robot-arms {
+            width: 128px;
+            height: 24px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: -18px;
+            pointer-events: none;
+        }
+        .robot-arm {
+            width: 24px;
+            height: 62px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #0e9da8, #087985);
+            border: 3px solid var(--gold);
+            transform-origin: top center;
+        }
+        .robot-arm.left { transform: rotate(22deg); }
+        .robot-arm.right { transform: rotate(-22deg); }
+        .kaftan {
+            position: relative;
+            width: 94px;
+            height: 88px;
+            display: grid;
+            place-items: center;
+            border-radius: 18px 18px 28px 28px;
+            background:
+                linear-gradient(135deg, transparent 42%, rgba(255,255,255,.20) 42%, rgba(255,255,255,.20) 52%, transparent 52%),
+                linear-gradient(135deg, #10a8ad, #087985);
+            border: 4px solid var(--gold);
+            color: #fff;
+            font-size: .78rem;
+            font-weight: 1000;
+        }
+        .kaftan::before {
+            content: "";
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border: 2px solid rgba(255, 228, 163, .72);
+            transform: rotate(45deg);
+        }
+        .robot-boots {
+            display: flex;
+            gap: 12px;
+            margin-top: -2px;
+        }
+        .boot {
+            width: 30px;
+            height: 18px;
+            border-radius: 8px 8px 12px 12px;
+            background: #553012;
+            border: 2px solid var(--gold);
+        }
+        @media (max-width: 940px) {
+            .topbar { align-items: flex-start; flex-direction: column; }
+            .login-grid, .game-layout, .profile-layout { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .game-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .level-strip { grid-template-columns: repeat(5, minmax(42px, 1fr)); }
+        }
+        @media (max-width: 640px) {
+            .app { width: min(100% - 18px, 1200px); padding-top: 10px; }
+            .login-hero { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+            .category-grid, .stats { grid-template-columns: 1fr; }
+            .game-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .mangala-board {
+                grid-template-columns: 54px minmax(260px, 1fr) 54px;
+                gap: 8px;
+                overflow-x: auto;
+            }
+            .pit-grid { grid-template-rows: repeat(2, 60px); }
+            .store { min-height: 138px; }
+            .robot { width: 205px; right: 8px; bottom: 8px; }
+            .speech { font-size: .78rem; }
+        }
+        /* Teacher and Admin dashboard styling */
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .class-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        .student-list-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .student-list-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .student-item-btn {
+            padding: 15px;
+            border-radius: 16px;
+            border: 2px solid var(--line);
+            background: var(--panel);
+            cursor: pointer;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, border-color 0.2s;
+            color: var(--ink);
+            width: 100%;
+        }
+        .student-item-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--turquoise);
+        }
+        .student-item-btn.active {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, var(--gold-soft), var(--panel));
+        }
+        .student-detail-panel {
+            background: var(--panel);
+            border: 2px solid var(--line);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+        .teacher-badge {
+            background: var(--gold-soft);
+            color: #704d05;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+        .metric-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        @media (max-width: 640px) {
+            .metric-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--line);
+            padding: 12px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        body.dark .metric-card {
+            background: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header id="topbar" class="topbar hidden">
+            <div class="brand">
+                <img class="logo" src="yula-ai-logo.jpg" alt="YULA-AI logosu">
+                <div class="brand-title">
+                    <strong>YULA-AI</strong>
+                    <span>Akıl ve Zeka Oyunları Eğitim Koçu</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <button id="nav-dashboard" onclick="showPage('dashboard')">Ana Sayfa</button>
+                <button id="nav-games" onclick="showPage('games')">Oyunlar</button>
+                <button id="nav-profile" onclick="showPage('profile')">Profil</button>
+                <button onclick="toggleTheme()">Gece / Gündüz</button>
+                <button class="danger" onclick="logout()">Çıkış</button>
+            </nav>
+        </header>
+
+        <main id="login" class="login">
+            <section class="login-shell">
+                <div class="login-hero">
+                    <img src="yula-ai-logo.jpg" alt="YULA-AI logosu">
+                    <div>
+                        <h1>YULA-AI</h1>
+                        <p class="lead" style="margin:0;">Akıl ve Zeka Oyunları Eğitim Koçu. Obaya hoş geldin küçük bilge; taşlar, ipuçları ve zeka meydanı seni bekliyor.</p>
+                    </div>
+                </div>
+
+                <div class="login-grid">
+                    <section class="login-panel student" id="mainLoginPanel">
+                        <div class="icon" id="loginIcon">🎒</div>
+                        <span class="badge" id="loginBadge">Öğrenci Giriş Paneli</span>
+                        <h2 id="loginTitle">Öğrenci Girişi</h2>
+                        <p class="lead" id="loginDesc">Adını yaz, börklü Yula seni zeka otağına alsın. Bugün hangi unvana yürüyoruz bakalım?</p>
+                        
+                        <input id="nameInput" class="field" placeholder="Kullanıcı adınızı yazın..." maxlength="22" style="margin-bottom: 10px;">
+                        <input id="passInput" type="password" class="field" placeholder="Şifrenizi yazın (En az 8 hane)" style="margin-top: 0; margin-bottom: 12px;">
+                        
+                        <div id="studentModes" class="hidden" style="margin-top: 5px; margin-bottom: 15px;">
+                            <p class="lead" style="margin-bottom: 10px; font-weight: bold; font-size: 0.95rem;">Bir mod seçip meydan otağına girin:</p>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="primary-action" onclick="loginWithMode('explorer')" style="flex: 1; min-height: 44px; border-radius: 12px; font-weight: bold; background: linear-gradient(135deg, #ffe5a3, #d6aa46); border: 1px solid var(--line); font-size: 0.76rem;">KAŞİF MOD</button>
+                                <button class="primary-action" onclick="loginWithMode('helper')" style="flex: 1; min-height: 44px; border-radius: 12px; font-weight: bold; background: linear-gradient(135deg, #c9f7fb, #14b8c4); border: 1px solid var(--line); font-size: 0.76rem;">YARDIMSEVER MOD</button>
+                                <button class="primary-action" onclick="loginWithMode('competitor')" style="flex: 1; min-height: 44px; border-radius: 12px; font-weight: bold; background: linear-gradient(135deg, #ffd8d8, #dc3e3e); color: #fff; border: 1px solid var(--line); font-size: 0.76rem;">REKABETÇİ MOD</button>
+                            </div>
+                        </div>
+
+                        <button class="primary" id="loginSubmitBtn" onclick="handleLoginSubmit()">Meydana çık</button>
+                    </section>
+
+                    <div class="side-login" id="sideLogin">
+                        <section class="login-panel" style="cursor: pointer;" onclick="selectRole('teacher')">
+                            <div class="icon">📚</div>
+                            <h2>Öğretmen Girişi</h2>
+                            <p class="lead">Sınıf obasının gelişimini izle, küçük bilgelerin hangi beceride parladığını gör.</p>
+                        </section>
+
+                        <section class="login-panel" style="cursor: pointer;" onclick="selectRole('admin')">
+                            <div class="icon">🛡️</div>
+                            <h2>Yönetici Girişi</h2>
+                            <p class="lead">Otağın düzenini, oyun meydanlarını ve eğitim ayarlarını yönet.</p>
+                        </section>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <main id="dashboard" class="hidden">
+            <section class="stats">
+                <div class="stat"><div class="stat-icon">🎖️</div><div><label>Unvan</label><strong id="statTitle">Alp</strong></div></div>
+                <div class="stat"><div class="stat-icon">⭐</div><div><label>Skor</label><strong id="statScore">250</strong></div></div>
+                <div class="stat"><div class="stat-icon">🎲</div><div><label>Oynanan</label><strong id="statPlayed">14 oyun</strong></div></div>
+                <div class="stat"><div class="stat-icon">📈</div><div><label>İlerleme</label><strong id="statProgress">%54</strong></div></div>
+            </section>
+
+            <section class="section-panel">
+                <div class="section-head">
+                    <div>
+                        <h2>Hoş geldin, <span id="welcomeName">Gezgin</span></h2>
+                        <p class="lead" style="margin: 4px 0 0;">İki büyük otağdan birini seç. Yula davulu çalıyor: zeka meydanı açıldı!</p>
+                    </div>
+                </div>
+
+                <div class="category-grid">
+                    <button class="category-card board" onclick="openCategory('board')">
+                        <div>
+                            <div class="big-icon">🪵</div>
+                            <h3>Masa Oyunları</h3>
+                            <p>Tahta, taş, strateji ve meydan okuma. Şimdilik Mangala oynanabilir.</p>
+                        </div>
+                        <span class="pill">10 oyun • Mangala açık</span>
+                    </button>
+
+                    <button class="category-card paper" onclick="openCategory('paper')">
+                        <div>
+                            <div class="big-icon">✏️</div>
+                            <h3>Kağıt-Kalem Oyunları</h3>
+                            <p>İpucu, mantık ve dikkat. Apartmanlar için 50 seviye yolu hazır, ilk 4 seviye açık.</p>
+                        </div>
+                        <span class="pill">50 seviye • 4 açık</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <main id="games" class="hidden">
+            <section id="categoryView" class="section-panel">
+                <div class="section-head">
+                    <div>
+                        <h2 id="categoryTitle">Oyunlar</h2>
+                        <p id="categoryHint" class="lead" style="margin: 4px 0 0;">Bir kategori seçerek oyun listesini görüntüle.</p>
+                    </div>
+                    <button class="small-btn" onclick="showPage('dashboard')">Kategorilere dön</button>
+                </div>
+                <div id="gameGrid" class="game-grid"></div>
+            </section>
+
+            <section id="mangalaGame" class="section-panel hidden">
+                <div class="section-head">
+                    <div>
+                        <h2>Mangala</h2>
+                        <p class="lead" style="margin: 4px 0 0;">Sen alttaki 6 kuyuyu kullanırsın. Hazinen sağdadır.</p>
+                    </div>
+                    <button class="small-btn" onclick="openCategory('board')">Listeye dön</button>
+                </div>
+                <div class="game-layout">
+                    <div>
+                        <div class="game-status">
+                            <span>Sıra: <strong id="mTurnText">Sende</strong></span>
+                            <span>Set: <strong id="mSetScore">0 - 0</strong></span>
+                            <span>Taş: <strong id="mStoneScore">0 - 0</strong></span>
+                        </div>
+
+                        <div class="mangala-board">
+                            <div id="pit13" class="store">0</div>
+                            <div class="pit-grid">
+                                <div class="pit-row">
+                                    <button id="pit12" class="pit">4</button>
+                                    <button id="pit11" class="pit">4</button>
+                                    <button id="pit10" class="pit">4</button>
+                                    <button id="pit9" class="pit">4</button>
+                                    <button id="pit8" class="pit">4</button>
+                                    <button id="pit7" class="pit">4</button>
+                                </div>
+                                <div class="pit-row">
+                                    <button id="pit0" class="pit player" onclick="playerMangala(0)">4</button>
+                                    <button id="pit1" class="pit player" onclick="playerMangala(1)">4</button>
+                                    <button id="pit2" class="pit player" onclick="playerMangala(2)">4</button>
+                                    <button id="pit3" class="pit player" onclick="playerMangala(3)">4</button>
+                                    <button id="pit4" class="pit player" onclick="playerMangala(4)">4</button>
+                                    <button id="pit5" class="pit player" onclick="playerMangala(5)">4</button>
+                                </div>
+                            </div>
+                            <div id="pit6" class="store">0</div>
+                        </div>
+
+                        <div class="action-row">
+                            <button class="primary-action" onclick="initMangala()">Yeni set</button>
+                            <button onclick="playTone('click'); yulaSpeak('Bilge börküm sallandı! Başlangıçta soldan dördüncü kuyu, son taşı hazinene getirir. Yani ekstra hamle kokusu var!')">Yula ipucu versin</button>
+                        </div>
+                        <div id="mLog" class="log" style="margin-top: 14px;"></div>
+                    </div>
+                    <aside class="rules">
+                        <p><strong>Mangala kuralları:</strong> 12 küçük kuyu ve 2 hazine vardır. Her küçük kuyuda oyun başında 4 taş bulunur. Senin hazinen sağdaki büyük kuyudur.</p>
+                        <ol>
+                            <li>Kendi 6 kuyundan taş olan bir kuyu seçersin.</li>
+                            <li>Kuyuda birden fazla taş varsa ilk taşı aynı kuyuya bırakır, kalanları sağa doğru tek tek dağıtırsın. Tek taş varsa doğrudan sonraki kuyuya gider.</li>
+                            <li>Son taş kendi hazinene düşerse tekrar oynarsın.</li>
+                            <li>Son taş rakip bölgede bir kuyuyu çift sayı yaparsa o kuyudaki taşları alırsın.</li>
+                            <li>Son taş kendi boş kuyuna düşer ve karşı kuyu doluysa, karşıdaki taşları ve son taşını hazinene alırsın.</li>
+                            <li>Kendi tarafındaki taşları ilk bitiren oyuncu, rakip tarafta kalan taşları da kazanır.</li>
+                        </ol>
+                    </aside>
+                </div>
+            </section>
+
+            <section id="apartmanGame" class="section-panel hidden">
+                <div class="section-head">
+                    <div>
+                        <h2>Apartmanlar</h2>
+                        <p class="lead" style="margin: 4px 0 0;">50 seviyelik yol var. İlk 4 seviye açık; 1. seviyeyi bitirince 2. seviyeye geçebilirsin.</p>
+                    </div>
+                    <button class="small-btn" onclick="openCategory('paper')">Listeye dön</button>
+                </div>
+                <div id="levelStrip" class="level-strip"></div>
+                <div class="game-layout">
+                    <div>
+                        <div class="game-status">
+                            <span>Seviye: <strong id="aptLevelText">1</strong></span>
+                            <span>Deneme: <strong id="aptTry">0</strong></span>
+                            <span>Puan: <strong id="aptPointText">10</strong></span>
+                        </div>
+                        <div class="apt-wrap">
+                            <div id="aptGrid" class="apt-grid"></div>
+                        </div>
+                        <div class="action-row">
+                            <button class="primary-action" onclick="checkApartmanlar()">Kontrol et</button>
+                            <button onclick="resetApartmanlar()">Temizle</button>
+                        </div>
+                        <div id="aptLog" class="log" style="margin-top: 14px;"></div>
+                    </div>
+                    <aside class="rules">
+                        <p><strong>Apartmanlar kuralları:</strong> Her sayı apartman yüksekliğidir. 1 en kısa, 4 en yüksek apartmandır.</p>
+                        <ol>
+                            <li>Her satırda ve sütunda 1, 2, 3, 4 sayıları birer kez bulunur.</li>
+                            <li>Kenar sayısı, o yönden bakıldığında görünen apartman sayısını gösterir.</li>
+                            <li>Yüksek apartman, arkasındaki daha kısa apartmanları gizler.</li>
+                            <li>İpucu 1 ise, o yöndeki ilk kareye en yüksek apartman gelir.</li>
+                            <li>Üç hata yaparsan çözüm açılmaz; Yula sana ipucu verir. Börk var, kopya yok!</li>
+                        </ol>
+                    </aside>
+                </div>
+            </section>
+        </main>
+
+        <main id="profile" class="hidden">
+            <section class="section-panel">
+                <div class="section-head">
+                    <div>
+                        <h2>Profil ve Bilişsel Gelişim</h2>
+                        <p class="lead" style="margin: 4px 0 0;">Profil görselini dilediğin gibi kişiselleştirebilir ve gelişim tablonu buradan takip edebilirsin.</p>
+                    </div>
+                </div>
+
+                <div class="profile-layout">
+                    <div>
+                        <div id="avatarPreview" class="avatar-main">🧒</div>
+                        <input id="profileName" class="field" style="margin-top: 10px;" maxlength="22" oninput="updateName()" placeholder="Profil adı">
+                        <div class="action-row">
+                            <button onclick="setGender('erkek')">Erkek</button>
+                            <button onclick="setGender('kiz')">Kız</button>
+                        </div>
+                        <h3 style="margin-top: 18px;">Profil görselleri</h3>
+                        <div id="avatarGrid" class="avatar-grid"></div>
+                    </div>
+
+                    <div>
+                        <table class="progress-table">
+                            <thead>
+                                <tr><th>Beceri</th><th>İlerleme</th><th>Durum</th></tr>
+                            </thead>
+                            <tbody id="progressRows"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <main id="teacherDashboard" class="hidden">
+            <section class="section-panel">
+                <div class="section-head">
+                    <div>
+                        <h2>Öğretmen Paneli - Sınıf Obası Raporları</h2>
+                        <p class="lead" style="margin: 4px 0 0;">Sınıf obalarından birini seçerek öğrencilerin bilişsel gelişim raporlarını ve oyun detaylarını inceleyebilirsiniz.</p>
+                    </div>
+                </div>
+                
+                <div class="class-grid" id="teacherClassGrid">
+                    <!-- Dynamic class buttons -->
+                </div>
+                
+                <div id="teacherClassSection" class="hidden">
+                    <h3 id="teacherClassTitle" style="margin-top: 15px; margin-bottom: 15px; color: var(--turquoise-dark); font-weight: 850;">Sınıf Listesi</h3>
+                    <div class="student-list-grid" id="teacherStudentGrid">
+                        <!-- Dynamic student items -->
+                    </div>
+                </div>
+                
+                <div id="teacherStudentDetail" class="student-detail-panel hidden">
+                    <!-- Dynamic student details -->
+                </div>
+            </section>
+        </main>
+
+        <main id="adminDashboard" class="hidden">
+            <section class="section-panel">
+                <div class="section-head">
+                    <div>
+                        <h2>Yönetici Kontrol Otağı - Öğretmen Performansları</h2>
+                        <p class="lead" style="margin: 4px 0 0;">Akıl ve Zeka Oyunları öğretmenlerini ve onların öğrenci ekosistemlerinin performanslarını takip edebilirsiniz.</p>
+                    </div>
+                </div>
+                
+                <div class="student-list-grid" id="adminTeacherGrid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 25px;">
+                    <!-- Dynamic teacher cards -->
+                </div>
+                
+                <div id="adminTeacherSection" class="hidden">
+                    <h3 id="adminTeacherTitle" style="margin-top: 15px; margin-bottom: 15px; color: var(--turquoise-dark); font-weight: 850;">Öğretmenin Öğrenci Listesi</h3>
+                    <div class="student-list-grid" id="adminStudentGrid">
+                        <!-- Dynamic student items -->
+                    </div>
+                </div>
+                
+                <div id="adminStudentDetail" class="student-detail-panel hidden">
+                    <!-- Dynamic student details -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <aside id="robot" class="robot">
+        <div id="speech" class="speech">Esenlikler küçük bilge! Obanın zeka ateşi yandı; adını yaz da maceraya koşalım.</div>
+        <div id="robotHandle" class="robot-body" title="YULA-AI">
+            <div class="bork"></div>
+            <div class="robot-head">
+                <div class="robot-eyes"><div class="robot-eye"></div><div class="robot-eye"></div></div>
+                <div id="mouth" class="robot-smile"></div>
+            </div>
+            <div class="robot-arms"><div class="robot-arm left"></div><div class="robot-arm right"></div></div>
+            <div class="kaftan">YULA</div>
+            <div class="robot-boots"><div class="boot"></div><div class="boot"></div></div>
+        </div>
+    </aside>
+
+    <script>
+        const boardGames = ["Abluka", "Kulami", "Küre", "Mangala", "Motif", "Pentago", "Qbitz", "Tangramino", "Pentamino", "LookLook"];
+        const paperGames = ["Sudoku", "Bölgesel Sudoku", "Sihirli Piramit", "Apartmanlar", "Patika", "ABC Bağlama", "Yıldız Savaşları", "Amiral Battı", "Sözcük Avı", "Kakuro", "Çarpmaca", "Sözcük Yerleştirme", "Kendoku", "İşlem Karesi", "Sözcük Merdiveni", "Anagramlar", "Çit", "Kare Karalama", "Futoshiki", "Resfebe"];
+        const avatars = ["🧒", "👧", "🧑", "👦", "👩", "🐺", "🏹", "🐎", "🛡️", "🧩", "🧠", "⭐", "🔥", "⛺", "🪶", "🎲"];
+        const progress = [
+            ["Stratejik düşünme", 68, "Mangala ile güçleniyor"],
+            ["Uzamsal düşünme", 62, "Apartmanlar için iyi seviye"],
+            ["Dikkat ve odak", 74, "Oba gözcüsü gibi dikkatli"],
+            ["Mantıksal çıkarım", 57, "Biraz daha ipucu avı önerilir"],
+            ["Hızlı karar verme", 49, "Yavaş ama sağlam ilerliyor"]
+        ];
+
+        const aptLevels = [
+            {
+                solution: [[2, 1, 4, 3], [3, 4, 2, 1], [4, 3, 1, 2], [1, 2, 3, 4]],
+                clues: { top: [3, 2, 1, 2], bottom: [2, 3, 2, 1], left: [2, 2, 1, 4], right: [2, 3, 3, 1] },
+                points: 10,
+                hints: ["Kenarında 1 olan yönde ilk kareye 4 gelir.", "Son satıra soldan bakınca 1-2-3-4 gibi yükselen bir oba yolu var.", "Üstten 3 görünen ilk sütunda en yüksek apartman üçüncü sıraya yakın durur."]
+            },
+            {
+                solution: [[1, 3, 4, 2], [4, 2, 1, 3], [3, 4, 2, 1], [2, 1, 3, 4]],
+                clues: { top: [2, 2, 1, 3], bottom: [3, 3, 2, 1], left: [3, 1, 2, 3], right: [2, 2, 3, 1] },
+                points: 15,
+                hints: ["Solda 1 olan satırda ilk kare 4 olmalı.", "Sağda 1 olan satırda son kare 4 olmalı.", "Üstte 1 olan sütunda ilk kare 4 olduğu için arkasındakiler gizlenir."]
+            },
+            {
+                solution: [[3, 1, 2, 4], [2, 4, 1, 3], [1, 3, 4, 2], [4, 2, 3, 1]],
+                clues: { top: [1, 2, 3, 1], bottom: [1, 3, 2, 3], left: [2, 2, 3, 1], right: [1, 2, 2, 4] },
+                points: 20,
+                hints: ["Sağdan 4 görünen satır, sağdan bakınca 1-2-3-4 gibi yükselir.", "Üstte 1 olan sütunlarda ilk kare en yüksek apartmandır.", "Solda 1 olan son satırın ilk karesi 4 olmalı."]
+            },
+            {
+                solution: [[4, 2, 1, 3], [1, 3, 4, 2], [2, 4, 3, 1], [3, 1, 2, 4]],
+                clues: { top: [1, 3, 2, 2], bottom: [2, 1, 3, 1], left: [1, 3, 2, 2], right: [2, 2, 3, 1] },
+                points: 25,
+                hints: ["Üstten 1 görünen ilk sütunda en üst kare 4'tür.", "Alttan 1 görünen ikinci sütunun en alt karesi 4 olmalı.", "Sağdan 1 görünen son satırın son karesi 4'tür."]
+            }
+        ];
+
+        let user = { name: "Gezgin", gender: "erkek", avatar: "🧒", score: 250, played: 14, progress: 54, role: "Öğrenci", mode: "" };
+        let audioCtx = null;
+        let mBoard = [];
+        let mTurn = 0;
+        let mOver = false;
+        let mPlayerSets = 0;
+        let mAiSets = 0;
+        let aptLevel = 0;
+        let aptAttempts = 0;
+        let aptOpenLevels = 1;
+        const playableAptLevels = 4;
+
+        // Mock Database Generator Data
+        const boyNames = ["Mete", "Alparslan", "Barlas", "Göktürk", "Kaan", "Oğuz", "Arda", "Efe", "Yusuf", "Emir"];
+        const girlNames = ["Almıla", "Tomris", "Banu", "Asena", "Elif", "Gökçe", "Zeynep", "Defne", "Duru", "İpek"];
+        const cognitiveSkills = ["Stratejik düşünme", "Uzamsal düşünme", "Dikkat ve odak", "Mantıksal çıkarım", "Hızlı karar verme"];
+        const mockGames = ["Mangala", "Apartmanlar", "Sudoku", "Kakuro", "Abluka", "Küre"];
+        const classesList = ["4-A", "4-B", "4-C", "5-A", "5-B", "6-A", "6-B", "7-A"];
+        let classData = {};
+        
+        const mockTeachers = [
+            { name: "Ayşe Özdemir", cls: "4-A" },
+            { name: "Kemal Şahin", cls: "5-A" },
+            { name: "Merve Kaya", cls: "6-A" }
+        ];
+
+        function shuffleArray(arr) {
+            let copy = arr.slice();
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function createStudentObj(name, gender) {
+            let totalScore = Math.floor(Math.random() * 250) + 150; // 150 - 400
+            let opponentsCount = Math.floor(Math.random() * 8) + 3; // 3 - 10
+            
+            // Generate wins/losses/draws from random totals
+            let totalGames = Math.floor(Math.random() * 40) + 20; // 20 - 60 total games
+            let wins = Math.floor(totalGames * (0.3 + Math.random() * 0.35)); // 30-65% win rate
+            let draws = Math.floor((totalGames - wins) * (Math.random() * 0.3)); // up to 30% of remaining
+            let losses = totalGames - wins - draws;
+            
+            let skills = cognitiveSkills.map(skill => {
+                return { name: skill, progress: Math.floor(Math.random() * 40) + 50 }; // 50 - 90
+            });
+            
+            let gamesDetail = mockGames.map(game => {
+                let duration = Math.floor(Math.random() * 120) + 20; // 20 - 140 min
+                let score = Math.floor(duration * 1.5 + Math.random() * 20);
+                let players = Math.floor(Math.random() * 5) + 2; // 2 - 6 players
+                return { name: game, duration: duration, score: score, players: players };
+            });
+            
+            return {
+                name: name,
+                gender: gender,
+                totalScore: totalScore,
+                opponentsCount: opponentsCount,
+                totalGames: totalGames,
+                wins: wins,
+                draws: draws,
+                losses: losses,
+                skills: skills,
+                gamesDetail: gamesDetail
+            };
+        }
+
+        function generateMockStudents() {
+            classesList.forEach(cls => {
+                let students = [];
+                let boysSelected = shuffleArray(boyNames).slice(0, 4);
+                let girlsSelected = shuffleArray(girlNames).slice(0, 4);
+                
+                boysSelected.forEach(name => students.push(createStudentObj(name, "erkek")));
+                girlsSelected.forEach(name => students.push(createStudentObj(name, "kiz")));
+                
+                classData[cls] = shuffleArray(students);
+            });
+        }
+
+        // Active role for login screen
+        let activeRole = "student";
+
+        function selectRole(role) {
+            playTone("click");
+            activeRole = role;
+            
+            // Reset input values and visibility
+            document.getElementById("nameInput").value = "";
+            document.getElementById("passInput").value = "";
+            document.getElementById("nameInput").classList.remove("hidden");
+            document.getElementById("passInput").classList.remove("hidden");
+            document.getElementById("loginSubmitBtn").classList.remove("hidden");
+            document.getElementById("studentModes").classList.add("hidden");
+            
+            const badge = document.getElementById("loginBadge");
+            const title = document.getElementById("loginTitle");
+            const desc = document.getElementById("loginDesc");
+            const icon = document.getElementById("loginIcon");
+            const btn = document.getElementById("loginSubmitBtn");
+            const panel = document.getElementById("mainLoginPanel");
+            
+            // Reset custom classes
+            panel.className = "login-panel " + role;
+            
+            if (role === "student") {
+                badge.textContent = "Öğrenci Giriş Paneli";
+                title.textContent = "Öğrenci Girişi";
+                desc.textContent = "Adını yaz, börklü Yula seni zeka otağına alsın. Bugün hangi unvana yürüyoruz bakalım?";
+                icon.textContent = "🎒";
+                btn.textContent = "Meydana çık";
+            } else if (role === "teacher") {
+                badge.textContent = "Öğretmen Giriş Paneli";
+                title.textContent = "Öğretmen Girişi";
+                desc.textContent = "Sınıf obasının gelişimini izle, küçük bilgelerin hangi beceride parladığını gör.";
+                icon.textContent = "📚";
+                btn.textContent = "Öğretmen Otağına Gir";
+            } else if (role === "admin") {
+                badge.textContent = "Yönetici Giriş Paneli";
+                title.textContent = "Yönetici Girişi";
+                desc.textContent = "Otağın düzenini, oyun meydanlarını ve eğitim ayarlarını yönet.";
+                icon.textContent = "🛡️";
+                btn.textContent = "Yönetici Otağına Gir";
+            }
+            
+            renderRoleCards();
+        }
+
+        function renderRoleCards() {
+            const sideLogin = document.getElementById("sideLogin");
+            sideLogin.innerHTML = "";
+            
+            const roles = [
+                { id: "student", icon: "🎒", title: "Öğrenci Girişi", desc: "Adını yaz, börklü Yula seni zeka otağına alsın." },
+                { id: "teacher", icon: "📚", title: "Öğretmen Girişi", desc: "Sınıf obasının gelişimini izle, gelişim tablosunu gör." },
+                { id: "admin", icon: "🛡️", title: "Yönetici Girişi", desc: "Otağın düzenini, oyun meydanlarını ve ayarları yönet." }
+            ];
+            
+            roles.forEach(r => {
+                if (r.id !== activeRole) {
+                    const card = document.createElement("section");
+                    card.className = "login-panel";
+                    card.style.cursor = "pointer";
+                    card.onclick = () => selectRole(r.id);
+                    card.innerHTML = `
+                        <div class="icon">${r.icon}</div>
+                        <h2>${r.title}</h2>
+                        <p class="lead">${r.desc}</p>
+                    `;
+                    sideLogin.appendChild(card);
+                }
+            });
+        }
+
+        function handleLoginSubmit() {
+            playTone("click");
+            const name = document.getElementById("nameInput").value.trim();
+            const pass = document.getElementById("passInput").value;
+            
+            if (!name) {
+                playTone("bad");
+                yulaSpeak("Esenlikler! Lütfen önce kullanıcı adınızı girin.");
+                return;
+            }
+            
+            if (pass.length < 8) {
+                playTone("bad");
+                if (activeRole === "student") {
+                    yulaSpeak("Esenlikler küçük bilge! Otağa girebilmek için şifren en az 8 haneli olmalıdır. Şifre kutusunu doldurup tekrar dene!");
+                } else if (activeRole === "teacher") {
+                    yulaSpeak("Değerli öğretmenim, otağa giriş yapabilmek için şifreniz en az 8 haneli olmalıdır. Lütfen kontrol edip tekrar giriniz.");
+                } else {
+                    yulaSpeak("Değerli yöneticim, otağa giriş yapabilmek için şifreniz en az 8 haneli olmalıdır. Lütfen kontrol edip tekrar giriniz.");
+                }
+                return;
+            }
+            
+            if (activeRole === "student") {
+                // Show Student Modes instead of logging in directly
+                document.getElementById("nameInput").classList.add("hidden");
+                document.getElementById("passInput").classList.add("hidden");
+                document.getElementById("loginSubmitBtn").classList.add("hidden");
+                document.getElementById("studentModes").classList.remove("hidden");
+                yulaSpeak("Giriş bilgileri doğrulandı. Şimdi zeka otağına katılmak için bir mod seçin!");
+            } else {
+                login(activeRole);
+            }
+        }
+
+        function loginWithMode(mode) {
+            user.mode = mode;
+            login("student");
+        }
+
+        function login(role = "student") {
+            playTone("click");
+            const typed = document.getElementById("nameInput").value.trim();
+            if (typed) user.name = typed;
+            user.role = role === "teacher" ? "Öğretmen" : role === "admin" ? "Yönetici" : "Öğrenci";
+            
+            document.getElementById("login").classList.add("hidden");
+            document.getElementById("topbar").classList.remove("hidden");
+            
+            renderNavBar();
+            
+            if (user.role === "Öğretmen") {
+                showPage("teacherDashboard");
+                yulaSpeak(`Saygıdeğer öğretmenim ${user.name}, otağımıza hoş geldiniz. Sınıf gelişim raporları hazır!`);
+            } else if (user.role === "Yönetici") {
+                showPage("adminDashboard");
+                yulaSpeak(`Saygıdeğer yöneticim ${user.name}, yönetim otağına hoş geldiniz. Öğretmen başarı tabloları yüklendi.`);
+            } else {
+                // For student, redirect to dashboard (Ana Sayfa)
+                showPage("dashboard");
+                let modeText = user.mode === "explorer" ? "Kaşif Modu" : user.mode === "helper" ? "Yardımsever Modu" : "Rekabetçi Modu";
+                yulaSpeak(`${user.name}, obaya hoş geldin! ${modeText} ile zeka meydanındayız. Taşlar konuşsun!`);
+            }
+            renderAll();
+        }
+
+        function logout() {
+            playTone("click");
+            
+            // Reset login fields
+            document.getElementById("nameInput").value = "";
+            document.getElementById("passInput").value = "";
+            document.getElementById("nameInput").classList.remove("hidden");
+            document.getElementById("passInput").classList.remove("hidden");
+            document.getElementById("loginSubmitBtn").classList.remove("hidden");
+            document.getElementById("studentModes").classList.add("hidden");
+            activeRole = "student";
+            selectRole("student");
+            
+            document.getElementById("topbar").classList.add("hidden");
+            ["dashboard", "games", "profile", "teacherDashboard", "adminDashboard"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add("hidden");
+            });
+            document.getElementById("login").classList.remove("hidden");
+            yulaSpeak("Görüşürüz küçük bilge! Otağın kapısı sana hep açık.");
+        }
+
+        function renderNavBar() {
+            const nav = document.querySelector(".nav");
+            nav.innerHTML = "";
+            
+            if (user.role === "Öğretmen") {
+                nav.innerHTML = `
+                    <button id="nav-teacherDashboard" onclick="showPage('teacherDashboard')">Sınıflar</button>
+                    <button onclick="toggleTheme()">Gece / Gündüz</button>
+                    <button class="danger" onclick="logout()">Çıkış</button>
+                `;
+            } else if (user.role === "Yönetici") {
+                nav.innerHTML = `
+                    <button id="nav-adminDashboard" onclick="showPage('adminDashboard')">Öğretmenler</button>
+                    <button onclick="toggleTheme()">Gece / Gündüz</button>
+                    <button class="danger" onclick="logout()">Çıkış</button>
+                `;
+            } else {
+                nav.innerHTML = `
+                    <button id="nav-dashboard" onclick="showPage('dashboard')">Ana Sayfa</button>
+                    <button id="nav-games" onclick="showPage('games')">Oyunlar</button>
+                    <button id="nav-profile" onclick="showPage('profile')">Profil</button>
+                    <button onclick="toggleTheme()">Gece / Gündüz</button>
+                    <button class="danger" onclick="logout()">Çıkış</button>
+                `;
+            }
+        }
+
+        function showPage(page) {
+            playTone("click");
+            ["dashboard", "games", "profile", "teacherDashboard", "adminDashboard"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add("hidden");
+            });
+            
+            const target = document.getElementById(page);
+            if (target) target.classList.remove("hidden");
+            
+            document.querySelectorAll(".nav button").forEach(btn => btn.classList.remove("active"));
+            const active = document.getElementById(`nav-${page}`);
+            if (active) active.classList.add("active");
+            
+            if (page === "games") {
+                document.getElementById("categoryView").classList.remove("hidden");
+                document.getElementById("mangalaGame").classList.add("hidden");
+                document.getElementById("apartmanGame").classList.add("hidden");
+                renderGameList(boardGames, "Masa Oyunları", "Mangala şu an oynanabilir; diğer masa oyunları oba sandığında hazır bekliyor.", "board");
+            }
+            if (page === "profile") renderProfile();
+            if (page === "teacherDashboard") renderTeacherDashboard();
+            if (page === "adminDashboard") renderAdminDashboard();
+        }
+
+        function renderAll() {
+            document.getElementById("welcomeName").textContent = user.name;
+            document.getElementById("profileName").value = user.name;
+            document.getElementById("statTitle").textContent = getTitle();
+            document.getElementById("statScore").textContent = user.score;
+            document.getElementById("statPlayed").textContent = `${user.played} oyun`;
+            document.getElementById("statProgress").textContent = `%${user.progress}`;
+        }
+
+        function getTitle() {
+            if (user.score < 100) return user.gender === "erkek" ? "Alp" : "Almıla";
+            if (user.score < 200) return user.gender === "erkek" ? "Bakşı" : "Bitigçi";
+            if (user.score < 300) return user.gender === "erkek" ? "Tarkan" : "Tomris";
+            if (user.score < 400) return user.gender === "erkek" ? "Şad" : "Begüm";
+            return user.gender === "erkek" ? "Kağan" : "Hatun";
+        }
+
+        function openCategory(type) {
+            showPage("games");
+            if (type === "board") {
+                renderGameList(boardGames, "Masa Oyunları", "Abluka, Kulami, Küre ve diğer masa oyunları listelendi. Mangala oynanabilir.", "board");
+                yulaSpeak("Masa oyunları otağı açıldı. Mangala kartına bas, hazineni dolduralım!");
+            } else {
+                renderGameList(paperGames, "Kağıt-Kalem Oyunları", "Sudoku ailesi ve mantık oyunları listelendi. Apartmanlar oynanabilir.", "paper");
+                yulaSpeak("Kağıt-kalem otağı açıldı. Apartmanlar kartında görüş keskinliği lazım; kartal gibi bakacağız!");
+            }
+        }
+
+        function renderGameList(games, title, hint, type) {
+            document.getElementById("categoryView").classList.remove("hidden");
+            document.getElementById("mangalaGame").classList.add("hidden");
+            document.getElementById("apartmanGame").classList.add("hidden");
+            document.getElementById("categoryTitle").textContent = title;
+            document.getElementById("categoryHint").textContent = hint;
+            const grid = document.getElementById("gameGrid");
+            grid.innerHTML = "";
+            games.forEach(name => {
+                const playable = name === "Mangala" || name === "Apartmanlar";
+                const button = document.createElement("button");
+                button.className = `game-card ${playable ? "playable" : "disabled"}`;
+                button.innerHTML = `<strong>${name}</strong><span>${playable ? "Oynanabilir" : "Yakında açılacak"}</span>`;
+                if (playable) {
+                    button.onclick = () => name === "Mangala" ? openMangala() : openApartmanlar();
+                } else {
+                    button.onclick = () => {
+                        playTone("click");
+                        yulaSpeak(`${name} şimdilik otağın rafında. Bugün ${type === "board" ? "Mangala" : "Apartmanlar"} meydanındayız.`);
+                    };
+                }
+                grid.appendChild(button);
+            });
+        }
+
+        function openMangala() {
+            playTone("click");
+            document.getElementById("categoryView").classList.add("hidden");
+            document.getElementById("mangalaGame").classList.remove("hidden");
+            initMangala();
+        }
+
+        function initMangala() {
+            mBoard = [4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0];
+            mTurn = 0;
+            mOver = false;
+            document.getElementById("mLog").innerHTML = "";
+            updateMangala();
+            logMangala("Yeni set başladı. Alttaki kuyulardan birini seç.");
+            yulaSpeak("Mangala tahtası hazır. Oba taktiği: soldan dördüncü kuyu ekstra hamle kokar!");
+        }
+
+        function distribute(start, player) {
+            let stones = mBoard[start];
+            mBoard[start] = 0;
+            let current = start;
+            const skipStore = player === 0 ? 13 : 6;
+            if (stones === 1) {
+                current = (current + 1) % 14;
+                if (current === skipStore) current = (current + 1) % 14;
+                mBoard[current]++;
+                return current;
+            }
+            mBoard[start] = 1;
+            stones--;
+            while (stones > 0) {
+                current = (current + 1) % 14;
+                if (current === skipStore) continue;
+                mBoard[current]++;
+                stones--;
+            }
+            return current;
+        }
+
+        function playerMangala(pit) {
+            if (mOver || mTurn !== 0 || mBoard[pit] === 0) {
+                playTone("bad");
+                yulaSpeak("I-ııh, o kuyu şu an uygun değil küçük bilge. Taş olan kendi kuyularına bak!");
+                return;
+            }
+            playTone("click");
+            const last = distribute(pit, 0);
+            const captured = resolveMangalaLastStone(last, 0);
+            updateMangala();
+            if (captured) playTone("good");
+            if (checkMangalaEnd()) return;
+            if (last === 6) {
+                playTone("good");
+                logMangala("Son taş hazinene düştü. Bir hamle daha sende!");
+                yulaSpeak("Hah! Hazineye cuk oturdu. Bir hamle daha sende, oba alkışlıyor!");
+                return;
+            }
+            mTurn = 1;
+            updateMangala();
+            setTimeout(aiMangala, 700);
+        }
+
+        function aiMangala() {
+            if (mOver || mTurn !== 1) return;
+            const valid = [];
+            for (let i = 7; i <= 12; i++) if (mBoard[i] > 0) valid.push(i);
+            if (!valid.length) {
+                checkMangalaEnd();
+                return;
+            }
+            let best = valid[0];
+            let bestScore = -999;
+            valid.forEach(pit => {
+                const copy = mBoard.slice();
+                const last = simulate(copy, pit, 1);
+                let score = copy[13] - copy[6];
+                if (last === 13) score += 8;
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = pit;
+                }
+            });
+            const last = distribute(best, 1);
+            logMangala(`Yula-AI ${best - 6}. kuyusundan oynadı.`);
+            resolveMangalaLastStone(last, 1);
+            updateMangala();
+            if (checkMangalaEnd()) return;
+            if (last === 13) {
+                yulaSpeak("Son taşım hazineme geldi. Börküm havalanmadan bir hamle daha yapıyorum!");
+                setTimeout(aiMangala, 700);
+                return;
+            }
+            mTurn = 0;
+            updateMangala();
+        }
+
+        function simulate(board, start, player) {
+            let stones = board[start];
+            board[start] = 0;
+            let current = start;
+            const skipStore = player === 0 ? 13 : 6;
+            if (stones === 1) {
+                current = (current + 1) % 14;
+                if (current === skipStore) current = (current + 1) % 14;
+                board[current]++;
+                return current;
+            }
+            board[start] = 1;
+            stones--;
+            while (stones > 0) {
+                current = (current + 1) % 14;
+                if (current === skipStore) continue;
+                board[current]++;
+                stones--;
+            }
+            return current;
+        }
+
+        function resolveMangalaLastStone(last, player) {
+            const ownStore = player === 0 ? 6 : 13;
+            let captured = false;
+            if (player === 0 && last >= 7 && last <= 12 && mBoard[last] % 2 === 0) {
+                logMangala(`Rakip kuyuyu çift yaptın ve ${mBoard[last]} taş aldın.`);
+                mBoard[ownStore] += mBoard[last];
+                mBoard[last] = 0;
+                user.score += 4;
+                captured = true;
+            }
+            if (player === 1 && last >= 0 && last <= 5 && mBoard[last] % 2 === 0) {
+                mBoard[ownStore] += mBoard[last];
+                mBoard[last] = 0;
+                user.score = Math.max(0, user.score - 2);
+            }
+            if (player === 0 && last >= 0 && last <= 5 && mBoard[last] === 1) {
+                const opposite = 12 - last;
+                if (mBoard[opposite] > 0) {
+                    logMangala("Boş kuyu kuralı çalıştı. Karşı kuyudaki taşları aldın.");
+                    mBoard[6] += mBoard[last] + mBoard[opposite];
+                    mBoard[last] = 0;
+                    mBoard[opposite] = 0;
+                    user.score += 6;
+                    captured = true;
+                }
+            }
+            if (player === 1 && last >= 7 && last <= 12 && mBoard[last] === 1) {
+                const opposite = 12 - last;
+                if (mBoard[opposite] > 0) {
+                    mBoard[13] += mBoard[last] + mBoard[opposite];
+                    mBoard[last] = 0;
+                    mBoard[opposite] = 0;
+                }
+            }
+            renderAll();
+            return captured;
+        }
+
+        function checkMangalaEnd() {
+            const playerSide = mBoard.slice(0, 6).reduce((a, b) => a + b, 0);
+            const aiSide = mBoard.slice(7, 13).reduce((a, b) => a + b, 0);
+            if (playerSide !== 0 && aiSide !== 0) return false;
+            mOver = true;
+            mBoard[6] += playerSide;
+            mBoard[13] += aiSide;
+            for (let i = 0; i <= 5; i++) mBoard[i] = 0;
+            for (let i = 7; i <= 12; i++) mBoard[i] = 0;
+            if (mBoard[6] > mBoard[13]) {
+                mPlayerSets++;
+                user.score += 20;
+                user.played++;
+                playTone("good");
+                yulaSpeak("Set senin! Hazinen doldu taştı; oba meydanında davullar çalıyor!");
+                logMangala("Seti kazandın.");
+            } else if (mBoard[13] > mBoard[6]) {
+                mAiSets++;
+                user.played++;
+                yulaSpeak("Bu set bende kaldı ama üzülme; en iyi alpler bir sonraki hamlede parlıyor.");
+                logMangala("Yula-AI seti kazandı.");
+            } else {
+                user.played++;
+                yulaSpeak("24-24 beraberlik! Bu tam bir oba barışı oldu.");
+                logMangala("Set berabere bitti.");
+            }
+            updateMangala();
+            renderAll();
+            return true;
+        }
+
+        function updateMangala() {
+            mBoard.forEach((value, index) => {
+                document.getElementById(`pit${index}`).textContent = value;
+            });
+            document.getElementById("mTurnText").textContent = mOver ? "Set bitti" : (mTurn === 0 ? "Sende" : "Yula-AI'da");
+            document.getElementById("mStoneScore").textContent = `${mBoard[6]} - ${mBoard[13]}`;
+            document.getElementById("mSetScore").textContent = `${mPlayerSets} - ${mAiSets}`;
+        }
+
+        function logMangala(text) {
+            const log = document.getElementById("mLog");
+            log.innerHTML = `<div>• ${text}</div>` + log.innerHTML;
+        }
+
+        function openApartmanlar() {
+            playTone("click");
+            document.getElementById("categoryView").classList.add("hidden");
+            document.getElementById("apartmanGame").classList.remove("hidden");
+            renderLevelStrip();
+            initApartmanlar();
+        }
+
+        function renderLevelStrip() {
+            const strip = document.getElementById("levelStrip");
+            strip.innerHTML = "";
+            for (let i = 0; i < 50; i++) {
+                const btn = document.createElement("button");
+                const open = i < playableAptLevels && i < aptOpenLevels;
+                btn.className = `level-btn ${open ? "open" : "locked"} ${i === aptLevel ? "active" : ""}`;
+                btn.textContent = i + 1;
+                btn.onclick = () => {
+                    if (!open) {
+                        playTone("bad");
+                        yulaSpeak(i < playableAptLevels ? "Bu seviye kilitli. Önce önceki bulmacayı fethetmeliyiz!" : "Bu seviye şimdilik oba sandığında. İlk 4 seviye açık.");
+                        return;
+                    }
+                    playTone("click");
+                    aptLevel = i;
+                    initApartmanlar();
+                };
+                strip.appendChild(btn);
+            }
+        }
+
+        function initApartmanlar() {
+            aptAttempts = 0;
+            const level = aptLevels[aptLevel];
+            document.getElementById("aptTry").textContent = aptAttempts;
+            document.getElementById("aptLevelText").textContent = aptLevel + 1;
+            document.getElementById("aptPointText").textContent = level.points;
+            document.getElementById("aptLog").innerHTML = "";
+            renderLevelStrip();
+            const grid = document.getElementById("aptGrid");
+            grid.innerHTML = "";
+            for (let r = 0; r < 6; r++) {
+                for (let c = 0; c < 6; c++) {
+                    if ((r === 0 || r === 5) && (c === 0 || c === 5)) {
+                        grid.appendChild(document.createElement("div"));
+                    } else if (r === 0) {
+                        grid.appendChild(clue(level.clues.top[c - 1]));
+                    } else if (r === 5) {
+                        grid.appendChild(clue(level.clues.bottom[c - 1]));
+                    } else if (c === 0) {
+                        grid.appendChild(clue(level.clues.left[r - 1]));
+                    } else if (c === 5) {
+                        grid.appendChild(clue(level.clues.right[r - 1]));
+                    } else {
+                        const input = document.createElement("input");
+                        input.id = `apt-${r - 1}-${c - 1}`;
+                        input.inputMode = "numeric";
+                        input.maxLength = 1;
+                        input.addEventListener("input", () => {
+                            input.value = input.value.replace(/[^1-4]/g, "");
+                            input.classList.remove("ok", "bad");
+                        });
+                        grid.appendChild(input);
+                    }
+                }
+            }
+            yulaSpeak(`Apartmanlar ${aptLevel + 1}. seviye hazır. Kenardaki sayılar gözcü kuleleri gibi; kaç bina gördüklerini söylüyor.`);
+        }
+
+        function clue(value) {
+            const div = document.createElement("div");
+            div.className = "clue";
+            div.textContent = value;
+            return div;
+        }
+
+        function checkApartmanlar() {
+            playTone("click");
+            aptAttempts++;
+            document.getElementById("aptTry").textContent = aptAttempts;
+            const level = aptLevels[aptLevel];
+            let perfect = true;
+            let empty = false;
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const input = document.getElementById(`apt-${r}-${c}`);
+                    const value = Number(input.value);
+                    input.classList.remove("ok", "bad");
+                    if (!input.value) {
+                        empty = true;
+                        perfect = false;
+                    } else if (value === level.solution[r][c]) {
+                        input.classList.add("ok");
+                    } else {
+                        input.classList.add("bad");
+                        perfect = false;
+                    }
+                }
+            }
+            const log = document.getElementById("aptLog");
+            if (empty) {
+                playTone("bad");
+                log.innerHTML = `<div>• Eksik kareler var. Tüm alanları doldurmalısın.</div>` + log.innerHTML;
+                yulaSpeak("I-ııh, birkaç arsa boş kalmış. Obada boş apartman olmaz; hepsine 1 ile 4 arası yükseklik yazalım.");
+                return;
+            }
+            if (perfect) {
+                playTone("good");
+                user.score += level.points;
+                user.played++;
+                user.progress = Math.min(100, user.progress + 4);
+                aptOpenLevels = Math.max(aptOpenLevels, Math.min(playableAptLevels, aptLevel + 2));
+                renderAll();
+                renderLevelStrip();
+                log.innerHTML = `<div>• Kusursuz çözüm! ${aptLevel + 1}. seviye tamamlandı.</div>` + log.innerHTML;
+                if (aptLevel + 1 < playableAptLevels) {
+                    yulaSpeak(`Tam isabet! ${aptLevel + 2}. seviye kapısı açıldı. Börküm bile gururdan parladı!`);
+                } else {
+                    yulaSpeak("Açık seviyelerin hepsine meydan okudun. Şimdilik oba şampiyonu sensin!");
+                }
+            } else {
+                playTone("bad");
+                log.innerHTML = `<div>• Bazı kareler ipuçlarıyla çelişiyor. Kırmızı alanları yeniden düşün.</div>` + log.innerHTML;
+                if (aptAttempts > 0 && aptAttempts % 3 === 0) {
+                    const hint = level.hints[Math.floor((aptAttempts / 3 - 1) % level.hints.length)];
+                    yulaSpeak(`Üç deneme oldu, çözümü açmıyorum ama börkümden bir ipucu çıktı: ${hint}`);
+                    log.innerHTML = `<div>• Yula ipucu verdi: ${hint}</div>` + log.innerHTML;
+                } else {
+                    yulaSpeak("I-ııh, birkaç apartman obanın görüşünü kapatmış. En yüksek bina arkasındaki kısa binaları gizler, tekrar bakalım.");
+                }
+            }
+        }
+
+        function resetApartmanlar() {
+            playTone("click");
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const input = document.getElementById(`apt-${r}-${c}`);
+                    input.value = "";
+                    input.disabled = false;
+                    input.classList.remove("ok", "bad");
+                }
+            }
+            document.getElementById("aptLog").innerHTML = `<div>• Bulmaca temizlendi.</div>` + document.getElementById("aptLog").innerHTML;
+        }
+
+        function renderProfile() {
+            const preview = document.getElementById("avatarPreview");
+            preview.textContent = user.avatar;
+            preview.classList.toggle("girl", user.gender === "kiz");
+            document.getElementById("profileName").value = user.name;
+            const grid = document.getElementById("avatarGrid");
+            grid.innerHTML = "";
+            avatars.forEach(avatar => {
+                const btn = document.createElement("button");
+                btn.className = `avatar-btn ${avatar === user.avatar ? "active" : ""}`;
+                btn.textContent = avatar;
+                btn.onclick = () => {
+                    playTone("click");
+                    user.avatar = avatar;
+                    renderProfile();
+                    yulaSpeak("Profil damgan değişti. Oba kayıtlarına işledim!");
+                };
+                grid.appendChild(btn);
+            });
+            const rows = document.getElementById("progressRows");
+            rows.innerHTML = "";
+            progress.forEach(([name, value, status]) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${name}</td><td><div class="bar"><span style="width:${value}%"></span></div></td><td>%${value} • ${status}</td>`;
+                rows.appendChild(tr);
+            });
+        }
+
+        function updateName() {
+            const value = document.getElementById("profileName").value.trim();
+            if (value) {
+                user.name = value;
+                renderAll();
+            }
+        }
+
+        function setGender(gender) {
+            playTone("click");
+            user.gender = gender;
+            renderAll();
+            renderProfile();
+            yulaSpeak(gender === "erkek" ? "Mavi çerçeve açıldı. Alp yolu seni bekliyor!" : "Pembe çerçeve açıldı. Tomris zekasıyla meydan senin!");
+        }
+
+        function toggleTheme() {
+            playTone("click");
+            document.body.classList.toggle("dark");
+            yulaSpeak(document.body.classList.contains("dark") ? "Otağda gece oldu. Strateji ateşi hâlâ yanıyor!" : "Güneş doğdu! Turkuaz gök altında oyun zamanı.");
+        }
+
+        function yulaSpeak(text) {
+            const speech = document.getElementById("speech");
+            const mouth = document.getElementById("mouth");
+            speech.textContent = text;
+            mouth.classList.add("talking");
+            clearTimeout(window.yulaTimer);
+            window.yulaTimer = setTimeout(() => mouth.classList.remove("talking"), Math.min(5600, Math.max(1300, text.length * 38)));
+        }
+
+        function playTone(type) {
+            try {
+                audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                if (type === "good") {
+                    osc.frequency.setValueAtTime(520, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + .12);
+                    gain.gain.setValueAtTime(.0001, now);
+                    gain.gain.exponentialRampToValueAtTime(.08, now + .02);
+                    gain.gain.exponentialRampToValueAtTime(.0001, now + .18);
+                } else if (type === "bad") {
+                    osc.type = "sawtooth";
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.exponentialRampToValueAtTime(95, now + .16);
+                    gain.gain.setValueAtTime(.0001, now);
+                    gain.gain.exponentialRampToValueAtTime(.06, now + .02);
+                    gain.gain.exponentialRampToValueAtTime(.0001, now + .20);
+                } else {
+                    osc.frequency.setValueAtTime(360, now);
+                    osc.frequency.exponentialRampToValueAtTime(460, now + .06);
+                    gain.gain.setValueAtTime(.0001, now);
+                    gain.gain.exponentialRampToValueAtTime(.045, now + .01);
+                    gain.gain.exponentialRampToValueAtTime(.0001, now + .09);
+                }
+                osc.start(now);
+                osc.stop(now + .22);
+            } catch (error) {
+                return false;
+            }
+            return true;
+        }
+
+        // Teacher Dashboard rendering logic
+        let selectedClass = "";
+        let selectedStudent = null;
+
+        function renderTeacherDashboard() {
+            const grid = document.getElementById("teacherClassGrid");
+            grid.innerHTML = "";
+            classesList.forEach(cls => {
+                const btn = document.createElement("button");
+                btn.className = `small-btn ${selectedClass === cls ? "active" : ""}`;
+                btn.textContent = cls;
+                btn.onclick = () => selectTeacherClass(cls);
+                grid.appendChild(btn);
+            });
+            
+            if (selectedClass) {
+                document.getElementById("teacherClassSection").classList.remove("hidden");
+                document.getElementById("teacherClassTitle").textContent = `Sınıf Raporu: ${selectedClass}`;
+                
+                const sGrid = document.getElementById("teacherStudentGrid");
+                sGrid.innerHTML = "";
+                const students = classData[selectedClass];
+                students.forEach((student, index) => {
+                    const sBtn = document.createElement("button");
+                    sBtn.className = `student-item-btn ${selectedStudent && selectedStudent.name === student.name ? "active" : ""}`;
+                    const genderEmoji = student.gender === "kiz" ? "👧" : "👦";
+                    sBtn.innerHTML = `<strong>${genderEmoji} ${student.name}</strong><br><span style="font-size:0.8rem; color:var(--muted)">Toplam Skor: ${student.totalScore}</span>`;
+                    sBtn.onclick = () => selectTeacherStudent(student);
+                    sGrid.appendChild(sBtn);
+                });
+            } else {
+                document.getElementById("teacherClassSection").classList.add("hidden");
+                document.getElementById("teacherStudentDetail").classList.add("hidden");
+            }
+        }
+
+        function selectTeacherClass(cls) {
+            playTone("click");
+            selectedClass = cls;
+            selectedStudent = null;
+            document.getElementById("teacherStudentDetail").classList.add("hidden");
+            renderTeacherDashboard();
+            yulaSpeak(`${cls} sınıfı obasını seçtiniz. 8 öğrencimizin zeka skorları listelendi.`);
+        }
+
+        function selectTeacherStudent(student) {
+            playTone("click");
+            selectedStudent = student;
+            renderTeacherDashboard();
+            
+            const detailPanel = document.getElementById("teacherStudentDetail");
+            detailPanel.classList.remove("hidden");
+            
+            const genderBadge = student.gender === "kiz" ? "Kız Öğrenci" : "Erkek Öğrenci";
+            const genderColor = student.gender === "kiz" ? "var(--pink)" : "var(--blue)";
+            
+            let skillRows = "";
+            student.skills.forEach(s => {
+                skillRows += `
+                    <tr>
+                        <td>${s.name}</td>
+                        <td><div class="bar"><span style="width:${s.progress}%"></span></div></td>
+                        <td>%${s.progress}</td>
+                    </tr>
+                `;
+            });
+            
+            let gameRows = "";
+            student.gamesDetail.forEach(g => {
+                gameRows += `
+                    <tr>
+                        <td>${g.name}</td>
+                        <td style="text-align:center;">${g.duration} dk</td>
+                        <td style="text-align:center;">${g.players} kişi</td>
+                        <td style="text-align:center;">${g.score} puan</td>
+                    </tr>
+                `;
+            });
+            
+            const totalDuration = student.gamesDetail.reduce((sum, g) => sum + g.duration, 0);
+            
+            detailPanel.innerHTML = `
+                <div class="section-head" style="border-bottom: 2px dashed var(--line); padding-bottom: 12px; margin-bottom: 15px;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.45rem; color: var(--turquoise-dark); font-weight: 850;">Öğrenci Analiz Kartı: ${student.name}</h3>
+                        <span class="teacher-badge" style="background:${genderColor}; color:#fff; margin-top:5px; display:inline-block;">${genderBadge}</span>
+                    </div>
+                    <button class="small-btn" onclick="document.getElementById('teacherStudentDetail').classList.add('hidden'); selectedStudent = null; renderTeacherDashboard();">Kartı Kapat</button>
+                </div>
+                
+                <div class="metric-cards">
+                    <div class="metric-card">
+                        <div style="font-size:1.8rem;">🏆</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Toplam Skor</label>
+                            <strong style="font-size:1.15rem;">${student.totalScore} Puan</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div style="font-size:1.8rem;">👥</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Rakip Oyuncu</label>
+                            <strong style="font-size:1.15rem;">${student.opponentsCount} Farklı Kişi</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div style="font-size:1.8rem;">⏱️</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Toplam Süre</label>
+                            <strong style="font-size:1.15rem;">${totalDuration} Dakika</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(40,168,107,.12), rgba(40,168,107,.04));">
+                        <div style="font-size:1.8rem;">✅</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Galibiyet</label>
+                            <strong style="font-size:1.15rem; color:var(--green);">${student.wins}</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(220,62,62,.12), rgba(220,62,62,.04));">
+                        <div style="font-size:1.8rem;">❌</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Mağlubiyet</label>
+                            <strong style="font-size:1.15rem; color:var(--red);">${student.losses}</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(214,170,70,.12), rgba(214,170,70,.04));">
+                        <div style="font-size:1.8rem;">🤝</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Beraberlik</label>
+                            <strong style="font-size:1.15rem; color:var(--gold);">${student.draws}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:20px; margin-top:20px;">
+                    <div>
+                        <h4 style="margin-top:0; margin-bottom:10px; font-weight:800; color:var(--ink);">Bilişsel Gelişim Tablosu</h4>
+                        <table class="progress-table" style="width:100%;">
+                            <tbody>${skillRows}</tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h4 style="margin-top:0; margin-bottom:10px; font-weight:800; color:var(--ink);">Oyun Detayları</h4>
+                        <table class="progress-table" style="width:100%;">
+                            <thead>
+                                <tr style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">
+                                    <th style="padding:0 6px;">Oyun</th>
+                                    <th style="padding:0 6px;">Süre</th>
+                                    <th style="padding:0 6px;">Kişi</th>
+                                    <th style="padding:0 6px;">Skor</th>
+                                </tr>
+                            </thead>
+                            <tbody>${gameRows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            yulaSpeak(`${student.name} isimli öğrencimizin gelişim ve oyun karnesi yüklendi.`);
+        }
+
+        let selectedAdminTeacherIdx = -1;
+        let selectedAdminStudent = null;
+
+        function renderAdminDashboard() {
+            const grid = document.getElementById("adminTeacherGrid");
+            grid.innerHTML = "";
+            
+            mockTeachers.forEach((teacher, idx) => {
+                const totalScore = getTeacherTotalScore(teacher);
+                const card = document.createElement("button");
+                card.className = `student-item-btn ${selectedAdminTeacherIdx === idx ? "active" : ""}`;
+                card.innerHTML = `
+                    <div style="font-size: 1.5rem; margin-bottom: 5px;">👨‍🏫</div>
+                    <strong>${teacher.name}</strong><br>
+                    <span class="teacher-badge" style="margin-top: 5px; display: inline-block;">Sınıfı: ${teacher.cls}</span><br>
+                    <span style="font-size:0.78rem; color:var(--muted); display:inline-block; margin-top:5px; font-weight:bold;">Öğrenci Toplam Skoru: ${totalScore}</span>
+                `;
+                card.onclick = () => selectAdminTeacher(idx);
+                grid.appendChild(card);
+            });
+            
+            if (selectedAdminTeacherIdx !== -1) {
+                const teacher = mockTeachers[selectedAdminTeacherIdx];
+                document.getElementById("adminTeacherSection").classList.remove("hidden");
+                document.getElementById("adminTeacherTitle").textContent = `${teacher.name} Öğretmenimizin Öğrencileri (${teacher.cls})`;
+                
+                const sGrid = document.getElementById("adminStudentGrid");
+                sGrid.innerHTML = "";
+                const students = classData[teacher.cls];
+                students.forEach(student => {
+                    const sBtn = document.createElement("button");
+                    sBtn.className = `student-item-btn ${selectedAdminStudent && selectedAdminStudent.name === student.name ? "active" : ""}`;
+                    const genderEmoji = student.gender === "kiz" ? "👧" : "👦";
+                    sBtn.innerHTML = `<strong>${genderEmoji} ${student.name}</strong><br><span style="font-size:0.8rem; color:var(--muted)">Toplam Skor: ${student.totalScore}</span>`;
+                    sBtn.onclick = () => selectAdminStudent(student);
+                    sGrid.appendChild(sBtn);
+                });
+            } else {
+                document.getElementById("adminTeacherSection").classList.add("hidden");
+                document.getElementById("adminStudentDetail").classList.add("hidden");
+            }
+        }
+
+        function getTeacherTotalScore(teacher) {
+            const students = classData[teacher.cls];
+            if (!students) return 0;
+            return students.reduce((sum, s) => sum + s.totalScore, 0);
+        }
+
+        function selectAdminTeacher(idx) {
+            playTone("click");
+            selectedAdminTeacherIdx = idx;
+            selectedAdminStudent = null;
+            document.getElementById("adminStudentDetail").classList.add("hidden");
+            renderAdminDashboard();
+            yulaSpeak(`${mockTeachers[idx].name} öğretmenimizin öğrenci grubu seçildi.`);
+        }
+
+        function selectAdminStudent(student) {
+            playTone("click");
+            selectedAdminStudent = student;
+            renderAdminDashboard();
+            
+            const detailPanel = document.getElementById("adminStudentDetail");
+            detailPanel.classList.remove("hidden");
+            
+            const genderBadge = student.gender === "kiz" ? "Kız Öğrenci" : "Erkek Öğrenci";
+            const genderColor = student.gender === "kiz" ? "var(--pink)" : "var(--blue)";
+            
+            let skillRows = "";
+            student.skills.forEach(s => {
+                skillRows += `
+                    <tr>
+                        <td>${s.name}</td>
+                        <td><div class="bar"><span style="width:${s.progress}%"></span></div></td>
+                        <td>%${s.progress}</td>
+                    </tr>
+                `;
+            });
+            
+            let gameRows = "";
+            student.gamesDetail.forEach(g => {
+                gameRows += `
+                    <tr>
+                        <td>${g.name}</td>
+                        <td style="text-align:center;">${g.duration} dk</td>
+                        <td style="text-align:center;">${g.players} kişi</td>
+                        <td style="text-align:center;">${g.score} puan</td>
+                    </tr>
+                `;
+            });
+            
+            const totalDuration = student.gamesDetail.reduce((sum, g) => sum + g.duration, 0);
+            
+            detailPanel.innerHTML = `
+                <div class="section-head" style="border-bottom: 2px dashed var(--line); padding-bottom: 12px; margin-bottom: 15px;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.45rem; color: var(--turquoise-dark); font-weight: 850;">Öğrenci Analiz Kartı: ${student.name}</h3>
+                        <span class="teacher-badge" style="background:${genderColor}; color:#fff; margin-top:5px; display:inline-block;">${genderBadge}</span>
+                    </div>
+                    <button class="small-btn" onclick="document.getElementById('adminStudentDetail').classList.add('hidden'); selectedAdminStudent = null; renderAdminDashboard();">Kartı Kapat</button>
+                </div>
+                
+                <div class="metric-cards">
+                    <div class="metric-card">
+                        <div style="font-size:1.8rem;">🏆</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Toplam Skor</label>
+                            <strong style="font-size:1.15rem;">${student.totalScore} Puan</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div style="font-size:1.8rem;">👥</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Rakip Oyuncu</label>
+                            <strong style="font-size:1.15rem;">${student.opponentsCount} Farklı Kişi</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div style="font-size:1.8rem;">⏱️</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Toplam Süre</label>
+                            <strong style="font-size:1.15rem;">${totalDuration} Dakika</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(40,168,107,.12), rgba(40,168,107,.04));">
+                        <div style="font-size:1.8rem;">✅</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Galibiyet</label>
+                            <strong style="font-size:1.15rem; color:var(--green);">${student.wins}</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(220,62,62,.12), rgba(220,62,62,.04));">
+                        <div style="font-size:1.8rem;">❌</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Mağlubiyet</label>
+                            <strong style="font-size:1.15rem; color:var(--red);">${student.losses}</strong>
+                        </div>
+                    </div>
+                    <div class="metric-card" style="background: linear-gradient(135deg, rgba(214,170,70,.12), rgba(214,170,70,.04));">
+                        <div style="font-size:1.8rem;">🤝</div>
+                        <div>
+                            <label style="font-size:0.72rem; color:var(--muted); font-weight:bold; display:block; text-transform:uppercase;">Beraberlik</label>
+                            <strong style="font-size:1.15rem; color:var(--gold);">${student.draws}</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:20px; margin-top:20px;">
+                    <div>
+                        <h4 style="margin-top:0; margin-bottom:10px; font-weight:800; color:var(--ink);">Bilişsel Gelişim Tablosu</h4>
+                        <table class="progress-table" style="width:100%;">
+                            <tbody>${skillRows}</tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <h4 style="margin-top:0; margin-bottom:10px; font-weight:800; color:var(--ink);">Oyun Detayları</h4>
+                        <table class="progress-table" style="width:100%;">
+                            <thead>
+                                <tr style="font-size:0.7rem; color:var(--muted); text-transform:uppercase;">
+                                    <th style="padding:0 6px;">Oyun</th>
+                                    <th style="padding:0 6px;">Süre</th>
+                                    <th style="padding:0 6px;">Kişi</th>
+                                    <th style="padding:0 6px;">Skor</th>
+                                </tr>
+                            </thead>
+                            <tbody>${gameRows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            yulaSpeak(`${student.name} isimli öğrencimizin analiz kartını inceliyorsunuz.`);
+        }
+
+        function makeRobotDraggable() {
+            const robot = document.getElementById("robot");
+            const handle = document.getElementById("robotHandle");
+            let dragging = false;
+            let startX = 0;
+            let startY = 0;
+            let initialLeft = 0;
+            let initialTop = 0;
+
+            const start = event => {
+                const point = event.touches ? event.touches[0] : event;
+                dragging = true;
+                startX = point.clientX;
+                startY = point.clientY;
+                const rect = robot.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                robot.style.right = "auto";
+                robot.style.bottom = "auto";
+                robot.style.left = `${initialLeft}px`;
+                robot.style.top = `${initialTop}px`;
+            };
+
+            const move = event => {
+                if (!dragging) return;
+                const point = event.touches ? event.touches[0] : event;
+                const nextLeft = Math.max(4, Math.min(window.innerWidth - robot.offsetWidth - 4, initialLeft + point.clientX - startX));
+                const nextTop = Math.max(4, Math.min(window.innerHeight - robot.offsetHeight - 4, initialTop + point.clientY - startY));
+                robot.style.left = `${nextLeft}px`;
+                robot.style.top = `${nextTop}px`;
+            };
+
+            const stop = () => { dragging = false; };
+
+            handle.addEventListener("mousedown", start);
+            handle.addEventListener("touchstart", start, { passive: true });
+            window.addEventListener("mousemove", move);
+            window.addEventListener("touchmove", move, { passive: true });
+            window.addEventListener("mouseup", stop);
+            window.addEventListener("touchend", stop);
+        }
+
+        makeRobotDraggable();
+        renderAll();
+        renderProfile();
+    </script>
+</body>
+</html>
